@@ -59,6 +59,16 @@ export class SignIn {
                                 "operator": "=",
                                 "value": `Enabled`
                             },
+                            {
+                                "property": "isSuper",
+                                "operator": "=",
+                                "value": `${true}`
+                            },
+                            {
+                                "property": "userType",
+                                "operator": "=",
+                                "value": `CUSTOMER`
+                            }
                         ]
                     }
                 });
