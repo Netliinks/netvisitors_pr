@@ -483,7 +483,7 @@ export class SuperUsers {
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
                     "userType": "CUSTOMER",
-                    "username": `${inputsCollection.username.value}@${currentUserInfo.customer.name.toLowerCase().replace(/\s+/g, '')}.com`
+                    "username": `${inputsCollection.username.value.replace(/\s+/g, '')}@${currentUserInfo.customer.name.toLowerCase().replace(/\s+/g, '')}.com`
                 })
                 let mailRaw = JSON.stringify({
                     "address": inputsCollection.email.value,

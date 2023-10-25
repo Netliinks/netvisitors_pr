@@ -493,7 +493,7 @@ export class Contractors {
                     "phone": `${_values.phoneNumer.value}`,
                     "dni": `${_values.dni.value}`,
                     "userType": "CONTRACTOR",
-                    "username": `${_values.username.value}@${currentUserInfo.customer.name.toLowerCase().replace(/\s+/g, '')}.com`,
+                    "username": `${_values.username.value.replace(/\s+/g, '')}@${currentUserInfo.customer.name.toLowerCase().replace(/\s+/g, '')}.com`,
                 })
                 const existUsername = await getVerifyUsername(`${_values.username.value}@${currentUserInfo.customer.name.toLowerCase().replace(/\s+/g, '')}.com`)
                 /*const existEmail = await getVerifyEmail(_values.email.value);
