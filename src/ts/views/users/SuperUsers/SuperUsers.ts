@@ -178,7 +178,7 @@ export class SuperUsers {
                 row.innerHTML += `
           <td>${client.firstName} ${client.lastName}</dt>
           <td>${client.username}</dt>
-          <td class="key"><button class="button" id="change-user-password"><i class="fa-regular fa-key"></i></button></td>
+          <td class="key"><button class="button" id="change-user-password" data-userid="${client.id}"><i class="fa-regular fa-key"></i></button></td>
           <td class="tag"><span>${client.state.name}</span></td>
           <td>${client.verifiedSuper ? 'Si' : 'No'}</td>
 
