@@ -41,10 +41,6 @@ export const UIContentLayout = `
             Fin <i class="fa-regular fa-filter"></i>
             </span></th>
 
-            <th class="thead_centered" width=110><span data-type="state">
-            Estado <i class="fa-regular fa-filter"></i>
-            </span></th>
-
             <th class="thead_centered" width=120><span data-type="details">
             Detalles
             </span></th>
@@ -91,18 +87,13 @@ export const UIRightSidebar = `
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-department"><i class="fa-solid fa-building"></i> # Guía:</label>
-        <input type="text" id="marking-department" class="input_filled" readonly>
+        <label for="marking-type"><i class="fa-solid fa-object-group"></i> Tipo:</label>
+        <input type="text" id="marking-type" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-contractor"><i class="fa-solid fa-briefcase"></i> Proveedor:</label>
-        <input type="text" id="marking-contractor" class="input_filled" readonly>
-    </div>
-    <br>
-    <div class="input_detail">
-        <label for="marking-product"><i class="fa-solid fa-briefcase"></i> Producto:</label>
-        <input type="text" id="marking-product" class="input_filled" readonly>
+        <label for="marking-type"><i class="fa-solid fa-object-group"></i> Tipo:</label>
+        <input type="text" id="marking-type" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">

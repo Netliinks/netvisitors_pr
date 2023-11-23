@@ -60,11 +60,6 @@ const GetVehiculars = async () => {
                                 "property": "driver",
                                 "operator": "contains",
                                 "value": `${infoPage.search.toLowerCase()}`
-                            },
-                            {
-                                "property": "visitState.name",
-                                "operator": "contains",
-                                "value": `${infoPage.search.toLowerCase()}`
                             }
                         ]
                     },
@@ -139,7 +134,6 @@ export class Vehiculars {
                 <td>${vehicular.driver}</td>
                 <td id="table-date">${vehicular.ingressDate} ${vehicular.ingressTime}</td>
                 <td id="table-date">${vehicular?.egressDate ?? ''} ${vehicular?.egressTime ?? ''}</td>
-                <td class="tag"><span>${vehicular.visitState.name}</span></td>
 
                 <td>
                     <button class="button" id="entity-details" data-entityId="${vehicular.id}">
@@ -196,49 +190,53 @@ export class Vehiculars {
                 });
                 // Event details
                 const _values = {
-                    status: document.getElementById('marking-status'),
+                    //status: document.getElementById('marking-status'),
                     name: document.getElementById('marking-name'),
                     dni: document.getElementById('marking-dni'),
                     license: document.getElementById('marking-license'),
-                    department: document.getElementById('marking-department'),
-                    contractor: document.getElementById('marking-contractor'),
-                    product: document.getElementById('marking-product'),
+                    //department: document.getElementById('marking-department'),
+                    //contractor: document.getElementById('marking-contractor'),
+                    //product: document.getElementById('marking-product'),
                     type: document.getElementById('marking-type'),
+                    unregisteredDriver: document.getElementById('marking-unregisteredDriver'),
+                    containerNro: document.getElementById('marking-containerNro'),
                     observation: document.getElementById('marking-observation'),
-                    dayManager: document.getElementById('marking-dayManager'),
-                    nightManager: document.getElementById('marking-nightManager'),
+                    //dayManager: document.getElementById('marking-dayManager'),
+                    //nightManager: document.getElementById('marking-nightManager'),
                     // Start marking
                     startDate: document.getElementById('marking-start-date'),
                     startTime: document.getElementById('marking-start-time'),
                     startGuardID: document.getElementById('marking-start-guard-id'),
                     startGuardName: document.getElementById('marking-start-guard-name'),
                     // End marking
-                    endDate: document.getElementById('marking-end-date'),
-                    endTime: document.getElementById('marking-end-time'),
-                    endGuardID: document.getElementById('marking-end-guard-id'),
-                    endGuardName: document.getElementById('marking-end-guard-name')
+                    //endDate: document.getElementById('marking-end-date'),
+                    //endTime: document.getElementById('marking-end-time'),
+                    //endGuardID: document.getElementById('marking-end-guard-id'),
+                    //endGuardName: document.getElementById('marking-end-guard-name')
                 };
-                _values.status.innerText = markingData.visitState.name;
+                //_values.status.innerText = markingData.visitState.name;
                 _values.name.value = markingData?.driver ?? '';
                 _values.dni.value = markingData?.dni ?? '';
                 _values.license.value = markingData?.licensePlate ?? '';
-                _values.department.value = markingData?.noGuide ?? '';
-                _values.contractor.value = markingData?.supplier ?? '';
-                _values.product.value = markingData?.product ?? '';
-                _values.type.value = markingData?.type ?? '';
+                //_values.department.value = markingData?.noGuide ?? '';
+                //_values.contractor.value = markingData?.supplier ?? '';
+                //_values.product.value = markingData?.product ?? '';
+                _values.type.value = markingData?.vehiMarcType ?? '';
+                _values.unregisteredDriver.value = markingData?.unregisteredDriver ?? '';
+                _values.containerNro.value = markingData?.containerNro ?? '';
                 _values.observation.value = markingData?.observation ?? '';
-                _values.dayManager.value = markingData?.dayManager ?? '';
-                _values.nightManager.value = markingData?.nightManager ?? '';
+                //_values.dayManager.value = markingData?.dayManager ?? '';
+                //_values.nightManager.value = markingData?.nightManager ?? '';
                 // Start marking
                 _values.startDate.value = markingData?.ingressDate ?? '';
                 _values.startTime.value = markingData?.ingressTime ?? '';
                 _values.startGuardID.value = markingData.ingressIssued?.username ?? '';
                 _values.startGuardName.value = markingData.ingressIssued?.firstName ?? '' + ' ' + markingData.ingressIssued?.lastName ?? '';
                 // End marking
-                _values.endDate.value = markingData?.egressDate ?? '';
-                _values.endTime.value = markingData?.egressTime ?? '';
-                _values.endGuardID.value = markingData.egressIssued?.username ?? '';
-                _values.endGuardName.value = markingData.egressIssued?.firstName ?? '' + ' ' + markingData.egressIssued?.lastName ?? '';
+                //_values.endDate.value = markingData?.egressDate ?? '';
+                //_values.endTime.value = markingData?.egressTime ?? '';
+                //_values.endGuardID.value = markingData.egressIssued?.username ?? '';
+                //_values.endGuardName.value = markingData.egressIssued?.firstName ?? '' + ' ' + markingData.egressIssued?.lastName ?? '';
                 this.closeRightSidebar();
             };
         };
