@@ -129,7 +129,7 @@ export const UIRightSidebar = `
         <input type="text" id="marking-start-guard-name" class="input_filled" readonly>
     </div>
     <br>
-    <!
+    <!--
     <!-- End marking -->
     <h3>Salida</h3>
     <br>

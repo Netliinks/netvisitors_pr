@@ -92,13 +92,13 @@ export const UIRightSidebar = `
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-type"><i class="fa-solid fa-object-group"></i> Tipo:</label>
-        <input type="text" id="marking-type" class="input_filled" readonly>
+        <label for="marking-unregisteredDriver"><i class="fa-solid fa-object-group"></i> Tipo:</label>
+        <input type="text" id="marking-unregisteredDriver" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-type"><i class="fa-solid fa-object-group"></i> Tipo:</label>
-        <input type="text" id="marking-type" class="input_filled" readonly>
+        <label for="marking-containerNro"><i class="fa-solid fa-object-group"></i> Nro. Contenedor:</label>
+        <input type="text" id="marking-containerNro" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
@@ -106,16 +106,7 @@ export const UIRightSidebar = `
         <input type="text" id="marking-observation" class="input_filled" readonly>
     </div>
     <br>
-    <div class="input_detail">
-        <label for="marking-start-dayManager"><i class="fa-solid fa-user-police"></i> Resp. Diurno:</label>
-        <input type="text" id="marking-dayManager" class="input_filled" readonly>
-    </div>
-    <br>
-    <div class="input_detail">
-        <label for="marking-nightManager"><i class="fa-solid fa-user-police"></i> Resp. Nocturno:</label>
-        <input type="text" id="marking-nightManager" class="input_filled" readonly>
-    </div>
-    <br>
+    <!--
     <!-- Start marking -->
     <h3>Ingreso</h3>
     <br>
@@ -138,7 +129,7 @@ export const UIRightSidebar = `
         <label for="marking-start-guard-name"><i class="fa-solid fa-user-police"></i></label>
         <input type="text" id="marking-start-guard-name" class="input_filled" readonly>
     </div>
-    <br>
+    <br> --!>
     <!-- End marking -->
     <h3>Salida</h3>
     <br>

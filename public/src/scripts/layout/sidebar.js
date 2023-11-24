@@ -19,7 +19,8 @@ import { SuperUsers } from "../views/users/SuperUsers/SuperUsers.js";
 import { Events } from "../views/binnacle/Events/EventsView.js";
 import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
 import { Blacklist } from "../views/users/blacklist/blacklist.js";
-import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
+import { VehicularsIng } from "../views/binnacle/vehiculars/ingress/Vehiculars.js";
+import { VehicularsExit } from "../views/binnacle/vehiculars/exit/Vehiculars.js";
 export class Sidebar {
     constructor() {
         this.sidebarContainer = document.getElementById('app-sidebar');
@@ -117,9 +118,15 @@ export class Sidebar {
                   </span>
                 </div>
 
-                <div class="sidebar_subitem" id="render-vehiculars">
+                <div class="sidebar_subitem" id="render-vehicularsing">
                   <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-car"></i> <div class="label">Ingreso Vehicular</div>
+                    <i class="fa-regular fa-car"></i> <div class="label">Ingreso V.</div>
+                  </span>
+                </div>
+
+                <div class="sidebar_subitem" id="render-vehicularsexit">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-car"></i> <div class="label">Salida V.</div>
                   </span>
                 </div>
               </div>
@@ -194,8 +201,11 @@ export class Sidebar {
             new Binnacle().render(Config.offset, Config.currentPage, "");
         });
         // render AssistControl
-        document.getElementById('render-vehiculars')?.addEventListener('click', () => {
-            new Vehiculars().render(Config.offset, Config.currentPage, "");
+        document.getElementById('render-vehicularsing')?.addEventListener('click', () => {
+            new VehicularsIng().render(Config.offset, Config.currentPage, "");
+        });
+        document.getElementById('render-vehicularsexit')?.addEventListener('click', () => {
+            new VehicularsExit().render(Config.offset, Config.currentPage, "");
         });
         // render AssistControl
         document.getElementById('render-assistControl')?.addEventListener('click', () => {

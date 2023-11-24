@@ -106,6 +106,7 @@ export const UIRightSidebar = `
         <input type="text" id="marking-observation" class="input_filled" readonly>
     </div>
     <br>
+    <!--
     <!-- Start marking -->
     <h3>Ingreso</h3>
     <br>
@@ -128,8 +129,7 @@ export const UIRightSidebar = `
         <label for="marking-start-guard-name"><i class="fa-solid fa-user-police"></i></label>
         <input type="text" id="marking-start-guard-name" class="input_filled" readonly>
     </div>
-    <br>
-    <!
+    <br> --!>
     <!-- End marking -->
     <h3>Salida</h3>
     <br>
@@ -152,7 +152,7 @@ export const UIRightSidebar = `
         <label for="marking-end-guard-name"><i class="fa-solid fa-user-police"></i></label>
         <input type="text" id="marking-end-guard-name" class="input_filled" readonly>
     </div>
-    <br> --!>
+    <br>
 </div>
 </div>
 `;
