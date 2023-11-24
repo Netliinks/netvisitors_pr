@@ -155,8 +155,8 @@ export class VehicularsExit {
                 <td style="white-space: nowrap">${vehicular.licensePlate}</td>
                 <td>${vehicular.dni}</td>
                 <td>${vehicular.driver}</td>
-                <td id="table-date">${vehicular.ingressDate} ${vehicular.ingressTime}</td>
-                <td id="table-date">${vehicular?.egressDate ?? ''} ${vehicular?.egressTime ?? ''}</td>
+                <td id="table-date">${vehicular?.egressDate ?? ''}</td>
+                <td id="table-date">${vehicular?.egressTime ?? ''}</td>
 
                 <td>
                     <button class="button" id="entity-details" data-entityId="${vehicular.id}">

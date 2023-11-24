@@ -34,11 +34,11 @@ export const UIContentLayout = `
             </span></th>
 
             <th class="thead_centered" width=100><span data-type="start">
-            Inicio <i class="fa-regular fa-filter"></i>
+            Fecha <i class="fa-regular fa-filter"></i>
             </span></th>
 
             <th class="thead_centered" width=120><span data-type="end">
-            Fin <i class="fa-regular fa-filter"></i>
+            Hora <i class="fa-regular fa-filter"></i>
             </span></th>
 
             <th class="thead_centered" width=120><span data-type="details">
@@ -68,9 +68,9 @@ export const UIRightSidebar = `
 
 <!-- EDITOR BODY -->
 <div class="entity_editor_body">
-    <div class="tag"><i class="label active_label"><i class="fa-solid fa-circle-dot"></i> Estado:</i> <span class="tag_gray" id="marking-status"></span></div>
+   <!-- <div class="tag"><i class="label active_label"><i class="fa-solid fa-circle-dot"></i> Estado:</i> <span class="tag_gray" id="marking-status"></span></div>
   <br><br>
-
+    --!>
     <div class="input_detail">
         <label for="marking-name"><i class="fa-solid fa-user"></i> Conductor:</label>
         <input type="text" id="marking-name" class="input_filled" readonly>
@@ -92,12 +92,12 @@ export const UIRightSidebar = `
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-unregisteredDriver"><i class="fa-solid fa-object-group"></i> Tipo:</label>
+        <label for="marking-unregisteredDriver"><i class="fa-solid fa-user-unlock"></i> Conductor no registrado:</label>
         <input type="text" id="marking-unregisteredDriver" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-containerNro"><i class="fa-solid fa-object-group"></i> Nro. Contenedor:</label>
+        <label for="marking-containerNro"><i class="fa-solid fa-truck-container"></i> Nro. Contenedor:</label>
         <input type="text" id="marking-containerNro" class="input_filled" readonly>
     </div>
     <br>
@@ -129,8 +129,9 @@ export const UIRightSidebar = `
         <input type="text" id="marking-start-guard-name" class="input_filled" readonly>
     </div>
     <br>
-    <!--
+    
     <!-- End marking -->
+    <!--
     <h3>Salida</h3>
     <br>
     <div class="input_detail">
