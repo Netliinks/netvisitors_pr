@@ -23,7 +23,7 @@ const connectionHeader = {
 const platformSystem: string = 'clients'
 
 const reqOP: Request = {
-    url: 'http://localhost:8080/oauth/token', //'https://backend.netliinks.com:443/oauth/token',
+    url: 'http://localhost:8080/oauth/token',//'https://backend.netliinks.com:443/oauth/token',
     method: 'POST'
 }
 
@@ -135,31 +135,31 @@ export class SignIn {
                     let rawCustomer = JSON.stringify({
                         "filter": {
                             "conditions": [
-                                {
-                                    "property": "id",
-                                    "operator": "=",
-                                    "value": `${customerId}`
-                                },
-                                {
-                                    "property": "business.id",
-                                    "operator": "=",
-                                    "value": `${user?.business?.id}`
-                                },
-                                {
-                                    "property": "business.state.name",
-                                    "operator": "=",
-                                    "value": `Enabled`
-                                },
-                                {
-                                    "property": "customer.state.name",
-                                    "operator": "=",
-                                    "value": `Enabled`
-                                },
+                              {
+                                "property": "id",
+                                "operator": "=",
+                                "value": `${customerId}`
+                              },
+                              {
+                                "property": "business.id",
+                                "operator": "=",
+                                "value": `${user?.business?.id}`
+                              },
+                              {
+                                "property": "business.state.name",
+                                "operator": "=",
+                                "value": `Enabled`
+                              },
+                              {
+                                "property": "state.name",
+                                "operator": "=",
+                                "value": `Enabled`
+                              },
                             ]
                         }
                     });
                     let customer = await getFilterEntityData("Customer", rawCustomer);
-                    if (user?.state?.name == 'Enabled' && customer.length != 0) {
+                    if(user?.state?.name == 'Enabled' && customer.length != 0){
                         new RenderApplicationUI().render();
                     }else{
                         this.signOut();

@@ -394,3 +394,117 @@ export const fillBtnPagination: any = (currentPage: number, color: any) => {
     if(btnActive) btnActive.style.backgroundColor=color;
     //btnActive.focus();
 }
+
+export const currentDateTime = () => {
+    const _date = new Date();
+    // TIME
+    const _hours = _date.getHours();
+    const _minutes = _date.getMinutes();
+    const _seconds = _date.getSeconds();
+    const _fixedHours = ('0' + _hours).slice(-2);
+    const _fixedMinutes = ('0' + _minutes).slice(-2);
+    const _fixedSeconds = ('0' + _seconds).slice(-2);
+    const currentTimeHHMMSS = `${_fixedHours}:${_fixedMinutes}:${_fixedSeconds}`;
+    const currentTimeHHMM = `${_fixedHours}:${_fixedMinutes}`;
+    // DATE
+    const _day = _date.getDate();
+    const _month = _date.getMonth() + 1;
+    const _year = _date.getFullYear();
+    const date = `${_year}-${('0' + _month).slice(-2)}-${('0' + _day).slice(-2)}`;
+    return {
+        date: date,
+        timeHHMMSS: currentTimeHHMMSS,
+        timeHHMM: currentTimeHHMM
+    }
+}
+
+export const calculateGestionMarcation = (assistControl: any) => {
+    let objDate: any = {}
+    let arrayAssist: any = []
+    assistControl.forEach((marcation: any) => {
+        let date = marcation.ingressDate+" "+marcation.user?.username ?? ''
+        if (objDate[date]) {
+            objDate[date].push(marcation);
+        } else {
+            objDate[date] = [marcation];
+        }
+    })
+    //console.log(objDate)
+
+    let key = Object.keys(objDate)
+    for(let i = 0; i < key.length; i++){
+        let objects = objDate[key[i]]
+        //console.log(objects)
+        //console.log(objects.length)
+        let valueMax: any = []
+        // @ts-ignore
+        objects.map(element => {
+            if(element.marcationState.name == 'Finalizado' && (element.egressTime != '' || element.egressTime != null || element.egressTime != undefined)){
+                valueMax.push(element)
+            }
+            
+            })
+        let maxDate: any = new Date(
+            Math.max(
+                // @ts-ignore
+                ...valueMax.map(element => {
+                    return new Date(element.egressDate+" "+element.egressTime);
+                }),
+            ),
+            );
+            let minDate = new Date(
+            Math.min(
+                // @ts-ignore
+                ...objects.map(element => {
+                return new Date(element.ingressDate+" "+element.ingressTime);
+                }),
+            ),
+            );
+            //console.log("max "+maxDate)
+            //console.log("min "+minDate)
+            const format = (date: any) => {
+            var year = date.getFullYear();
+            var month = ("0" + (date.getMonth() + 1)).slice(-2);
+            var day = ("0" + date.getDate()).slice(-2);
+
+            var hours = ("0" + date.getHours()).slice(-2);
+            var minutes = ("0" + date.getMinutes()).slice(-2);
+            var seconds = ("0" + date.getSeconds()).slice(-2);
+            return `${hours}:${minutes}:${seconds}`
+            }
+            let fechaSalida = ""
+            if(!isNaN(maxDate)) fechaSalida = format(maxDate)
+            let obj = {
+            "firstName": `${objects[0]?.user?.firstName ?? ''}`,
+            "lastName": `${objects[0]?.user?.lastName ?? ''}`,
+            "dni": `${objects[0]?.user?.dni ?? ''}`,
+            "ingressDate": `${objects[0].ingressDate}`,
+            "egressDate": `${objects[0].egressDate}`,
+            "ingressTime": `${format(minDate)}`,
+            "egressTime": `${fechaSalida}`,
+        };
+        arrayAssist.push(obj);
+    }
+    return arrayAssist;
+}
+
+export const searchUniversalSingle = async (param: any, operator: any, value: any, table: any) => {
+    const raw = JSON.stringify({
+        "filter": {
+          "conditions": [
+            {
+              "property": `${param}`,
+              "operator": `${operator}`,
+              "value": `${value}`
+            },
+          ]
+        },
+        sort: "-createdDate",
+    });
+    const data = await getFilterEntityData(`${table}`, raw);
+    if(data == undefined || data.length == 0){
+        console.log(`${param} ${value} no obtenido(a)`);
+    }else{
+        return data;
+    }
+}

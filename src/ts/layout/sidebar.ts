@@ -22,7 +22,8 @@ import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
 import { Blacklist } from "../views/users/blacklist/blacklist.js"
 import { VehicularsIng } from "../views/binnacle/vehiculars/ingress/Vehiculars.js"
 import { VehicularsExit } from "../views/binnacle/vehiculars/exit/Vehiculars.js"
-
+import { Sporadic } from "../views/assignment/tasks/sporadic/Sporadic.js";
+import { currentDateTime } from "../tools.js"
 export class Sidebar {
     private sidebarContainer: InterfaceElement = document.getElementById('app-sidebar')
     public render(): void {
@@ -149,6 +150,37 @@ export class Sidebar {
 
               </div>
             </div>
+
+            <div class="sidebar_item">
+              <span class="sidebar_item_label">
+              <i class="fa-regular fa-walkie-talkie"></i></i> <div class="label">Asignaciones</div>
+              </span>
+
+              <div class="sidebar_subitems">
+
+                <div class="sidebar_subitem" id="render-tasks">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-walkie-talkie"></i> <div class="label">Consignas</div>
+                  </span>
+                  <div class="sidebar_subitems">
+                    <!--div class="sidebar_subitem" id="render-taskstime">
+                      <span class="sidebar_subitem_label">
+                        <i class="fa-regular fa-timer"></i><div class="label">Tiempo</div>
+                      </span>
+                    </div-->
+                    
+                    <div class="sidebar_subitem" id="render-sporadic">
+                      <span class="sidebar_subitem_label">
+                        <i class="fa-regular fa-clock"></i> <div class="label">Específicas</div>
+                      </span>
+                  </div>
+                  </div> 
+
+                </div>
+
+               
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -225,7 +257,7 @@ export class Sidebar {
             new AssistControl().render(Config.offset, Config.currentPage, "")
         })
         document.getElementById('render-assistGestion')?.addEventListener('click', () => {
-          new AssistGestion().render();
+          new AssistGestion().render("", currentDateTime().date);
         });
         // render AssistControl
         document.getElementById('render-events')?.addEventListener('click', (): void => {
@@ -239,6 +271,10 @@ export class Sidebar {
         document.getElementById('render-superusers')?.addEventListener('click', (): void => {
             new SuperUsers().render(Config.offset, Config.currentPage, "")
         })
+
+        document.getElementById('render-sporadic')?.addEventListener('click', () => {
+          new Sporadic().render(Config.offset, Config.currentPage, "")
+        });
     }
 }
 

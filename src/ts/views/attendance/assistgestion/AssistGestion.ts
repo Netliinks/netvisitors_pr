@@ -5,9 +5,9 @@
 //
 import { Config } from "../../../Configs.js"
 import { getEntityData, getFile, getFilterEntityData } from "../../../endpoints.js";
-import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, verifyUserType, pageNumbers, fillBtnPagination } from "../../../tools.js";
+import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, verifyUserType, pageNumbers, fillBtnPagination, calculateGestionMarcation } from "../../../tools.js";
 import { InterfaceElement, InterfaceElementCollection } from "../../../types.js"
-import { UIContentLayout, UIRightSidebar } from "./Layout.js"
+import { UIContentLayout } from "./Layout.js"
 import { UITableSkeletonTemplate } from "./Template.js"
 import { exportMarcationsCsv, exportMarcationsPdf, exportMarcationsXls } from "../../../exportFiles/marcations2.js"
 
@@ -16,6 +16,13 @@ const tableRows = Config.tableRows
 let currentPage = Config.currentPage
 const pageName = 'Gestión de asistencias'
 const customerId = localStorage.getItem('customer_id');
+let infoPage = {
+    count: 0,
+    offset: Config.offset,
+    currentPage: currentPage,
+    search: "",
+    date: null
+};
 let dataPage: any
 const GetAssistControl = async (): Promise<void> => {
     //const assistControlRaw = await getEntitiesData('Marcation')
@@ -27,6 +34,11 @@ const GetAssistControl = async (): Promise<void> => {
                 "property": "customer.id",
                 "operator": "=",
                 "value": `${customerId}`
+              },
+              {
+                  "property": "ingressDate",
+                  "operator": "=",
+                  "value": `${infoPage.date}`
               }
             ],
             
@@ -35,76 +47,56 @@ const GetAssistControl = async (): Promise<void> => {
         fetchPlan: 'full',
         
     })
+    if (infoPage.search != "") {
+        raw = JSON.stringify({
+            "filter": {
+                "conditions": [
+                    {
+                        "group": "OR",
+                        "conditions": [
+                            {
+                                "property": "user.dni",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "user.firstName",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "user.secondLastName",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "marcationState.name",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            }
+                        ]
+                    },
+                    {
+                        "property": "customer.id",
+                        "operator": "=",
+                        "value": `${customerId}`
+                    },
+                    {
+                        "property": "ingressDate",
+                        "operator": "=",
+                        "value": `${infoPage.date}`
+                    }
+                ]
+            },
+            sort: "-createdDate",
+            //limit: Config.tableRows,
+            //offset: infoPage.offset,
+            fetchPlan: 'full',
+        });
+    }
     const assistControl: any = await getFilterEntityData("Marcation", raw)
-    let objDate: any = {}
-        let arrayAssist= []
-        assistControl.forEach((marcation: any) => {
-            let date = marcation.ingressDate+" "+marcation.user?.username ?? ''
-            if (objDate[date]) {
-                objDate[date].push(marcation);
-            } else {
-                objDate[date] = [marcation];
-            }
-        })
-        //console.log(objDate)
-
-        let key = Object.keys(objDate)
-        for(let i = 0; i < key.length; i++){
-            let objects = objDate[key[i]]
-            //console.log(objects)
-            //console.log(objects.length)
-            let valueMax: any = []
-            // @ts-ignore
-            objects.map(element => {
-                if(element.marcationState.name == 'Finalizado' && (element.egressTime != '' || element.egressTime != null || element.egressTime != undefined)){
-                    valueMax.push(element)
-                }
-                
-              })
-              
-            let maxDate: any = new Date(
-                Math.max(
-                    // @ts-ignore
-                  ...valueMax.map(element => {
-                        return new Date(element.egressDate+" "+element.egressTime);
-                  }),
-                ),
-              );
-              let minDate: any = new Date(
-                Math.min(
-                    // @ts-ignore
-                  ...objects.map(element => {
-                    return new Date(element.ingressDate+" "+element.ingressTime);
-                  }),
-                ),
-              );
-              //console.log("max "+maxDate)
-              //console.log("min "+minDate)
-              const format = (date: any) => {
-                var year = date.getFullYear();
-                var month = ("0" + (date.getMonth() + 1)).slice(-2);
-                var day = ("0" + date.getDate()).slice(-2);
-
-                var hours = ("0" + date.getHours()).slice(-2);
-                var minutes = ("0" + date.getMinutes()).slice(-2);
-                var seconds = ("0" + date.getSeconds()).slice(-2);
-                return `${hours}:${minutes}:${seconds}`
-              }
-              let fechaSalida = ""
-              if(!isNaN(maxDate)) fechaSalida = format(maxDate)
-              let obj = {
-                "firstName": `${objects[0]?.user?.firstName ?? ''}`,
-                "lastName": `${objects[0]?.user?.lastName ?? ''}`,
-                "dni": `${objects[0]?.user?.dni ?? ''}`,
-                "ingressDate": `${objects[0].ingressDate}`,
-                "egressDate": `${objects[0].egressDate}`,
-                "ingressTime": `${format(minDate)}`,
-                "egressTime": `${fechaSalida}`,
-            };
-            arrayAssist.push(obj);
-        }
     // @ts-ignore
-    dataPage = arrayAssist
+    dataPage = await calculateGestionMarcation(assistControl);
     return dataPage;
 }
 
@@ -113,13 +105,17 @@ export class AssistGestion {
     private siebarDialogContainer: InterfaceElement = document.getElementById('entity-editor-container')
     private appContainer: InterfaceElement = document.getElementById('datatable-container')
 
-    public render = async (): Promise<void> => {
+    public render = async (search: any, date: any): Promise<void> => {
+        infoPage.search = search;
+        infoPage.date = date
         this.appContainer.innerHTML = ''
         this.appContainer.innerHTML = UIContentLayout
 
         // Getting interface elements
         const viewTitle: InterfaceElement = document.getElementById('view-title')
         const tableBody: InterfaceElement = document.getElementById('datatable-body')
+        const dateField: InterfaceElement = document.getElementById('dateField');
+        dateField.value = date
 
         // Changing interface element content
         viewTitle.innerText = pageName
@@ -130,7 +126,7 @@ export class AssistGestion {
 
         // Exec functions
         this.load(tableBody, currentPage, assistControlArray)
-        this.searchVisit(tableBody, assistControlArray)
+        this.searchVisit(tableBody, assistControlArray, dateField)
         new filterDataByHeaderType().filter()
         this.pagination(assistControlArray, tableRows, currentPage)
         this.export()
@@ -172,14 +168,13 @@ export class AssistGestion {
                 tableBody.appendChild(row)
                 drawTagsIntoTables()
             }
-            this.previewAssist()
-            this.fixCreatedDate()
         }
     }
 
-    private searchVisit = async (tableBody: InterfaceElement, visits: any) => {
+    private searchVisit = async (tableBody: InterfaceElement, visits: any, dateField: any) => {
         const search: InterfaceElement = document.getElementById('search')
-
+        const btnSearch: InterfaceElement = document.getElementById('btnSearch');
+        search.value = infoPage.search;
         await search.addEventListener('keyup', () => {
             const arrayVisits: any = visits.filter((visit: any) =>
             `${visit.dni}${visit.firstName}${visit.lastName}${visit.ingressDate}${visit.ingressTime}${visit.egressDate}${visit.egressTime}`
@@ -194,138 +189,9 @@ export class AssistGestion {
 
             this.load(tableBody, currentPage, result)
         })
-    }
-
-    private previewAssist = async (): Promise<void> => {
-        const openButtons: InterfaceElement = document.querySelectorAll('#entity-details')
-        openButtons.forEach((openButton: InterfaceElement) => {
-            const entityId: string = openButton.dataset.entityid
-            openButton.addEventListener('click', (): void => {
-                renderInterface(entityId)
-            })
-        })
-
-
-        const renderInterface = async (entity: string): Promise<void> => {
-            let markingData = await getEntityData('Marcation', entity)
-            renderRightSidebar(UIRightSidebar)
-
-            const _values: InterfaceElementCollection = {
-                gallery: document.getElementById('galeria'),
-                status: document.getElementById('marking-status'),
-                name: document.getElementById('marking-name'),
-                dni: document.getElementById('marking-dni'),
-                type: document.getElementById('marking-type'),
-                //department: document.getElementById('marking-department'),
-                //contractor: document.getElementById('marking-contractor'),
-                // Start marking
-                startDate: document.getElementById('marking-start-date'),
-                startTime: document.getElementById('marking-start-time'),
-                startGuardID: document.getElementById('marking-start-guard-id'),
-                startGuardName: document.getElementById('marking-start-guard-name'),
-                // End marking
-                endDate: document.getElementById('marking-end-date'),
-                endTime: document.getElementById('marking-end-time'),
-                endGuardID: document.getElementById('marking-end-guard-id'),
-                endGuardName: document.getElementById('marking-end-guard-name')
-            }
-
-            _values.status.innerText = markingData.marcationState.name
-            _values.name.value = markingData.user.firstName + ' ' + markingData.user.lastName
-            _values.dni.value = markingData.user?.dni ?? ''
-            _values.type.value = verifyUserType(markingData.user.userType)
-            //_values.department.value = markingData.user?.department ?? ''
-            //_values.contractor.value = markingData.user?.contractor ?? ''
-
-            // Start marking
-            _values.startDate.value = markingData.ingressDate
-            _values.startTime.value = markingData.ingressTime
-            _values.startGuardID.value = markingData.ingressIssued?.username ?? ''
-            _values.startGuardName.value =`${markingData.ingressIssued?.firstName ?? ''} ${markingData.ingressIssued?.lastName ?? ''}`
-            // End marking
-            _values.endDate.value = markingData?.egressDate ?? ''
-            _values.endTime.value = markingData?.egressTime ?? ''
-            _values.endGuardID.value = markingData.egressIssued?.username ?? ''
-            _values.endGuardName.value = `${markingData.egressIssued?.firstName ?? ''}  ${markingData.egressIssued?.lastName ?? ''}`
-
-            if (markingData?.camera1 !== undefined || markingData?.camera2 !== undefined || markingData?.camera3 !== undefined|| markingData?.camera4 !== undefined) {
-                let images = []
-                if(markingData?.camera1 !== undefined){
-                    let details = {
-                        "image": `${await getFile(markingData.camera1)}`,
-                        "description": `Cámara 1 - ${markingData.user?.dni ?? ''}`,
-                        "icon": "camera",
-                        "id": "camera"
-                    }
-                    images.push(details)
-                }
-                if(markingData?.camera2 !== undefined){
-                    let details = {
-                        "image": `${await getFile(markingData.camera2)}`,
-                        "description": `Cámara 2 - ${markingData.user?.dni ?? ''}`,
-                        "icon": "camera",
-                        "id": "camera2"
-                    }
-                    images.push(details)
-                }
-                if(markingData?.camera3 !== undefined){
-                    let details = {
-                        "image": `${await getFile(markingData.camera3)}`,
-                        "description": `Cámara 3 - ${markingData.user?.dni ?? ''}`,
-                        "icon": "camera",
-                        "id": "camera3"
-                    }
-                    images.push(details)
-                }
-                if(markingData?.camera4 !== undefined){
-                    let details = {
-                        "image": `${await getFile(markingData.camera4)}`,
-                        "description": `Cámara 4 - ${markingData.user?.dni ?? ''}`,
-                        "icon": "camera",
-                        "id": "camera4"
-                    }
-                    images.push(details)
-                }
-                for(let i=0; i<images.length; i++){
-                    _values.gallery.innerHTML += `
-                        <label><i class="fa-solid fa-${images[i].icon}"></i> ${images[i].description}</label>
-                        <img width="100%" class="note_picture margin_b_8" src="${images[i].image}" id="entity-details-zoom" data-entityId="${images[i].id}" name="${images[i].id}">
-                    `
-                }
-                this.previewZoom(images)
-            }else{
-                _values.gallery.innerHTML += `
-                <div class="input_detail">
-                    <label><i class="fa-solid fa-info-circle"></i> No hay imágenes</label>
-                </div>
-                `
-            }
-
-            drawTagsIntoTables()
-
-            this.closeRightSidebar()
-            drawTagsIntoTables()
-        }
-
-    }
-
-    private closeRightSidebar = (): void => {
-        const closeButton: InterfaceElement = document.getElementById('close')
-
-        const editor: InterfaceElement = document.getElementById('entity-editor-container')
-
-        closeButton.addEventListener('click', (): void => {
-            new CloseDialog().x(editor)
-        })
-    }
-
-    private fixCreatedDate = (): void => {
-        const tableDate: InterfaceElementCollection = document.querySelectorAll('#table-date')
-
-        tableDate.forEach((date: InterfaceElement) => {
-            const separateDateAndTime = date.innerText.split('T')
-            date.innerText = separateDateAndTime[0]
-        })
+        btnSearch.addEventListener('click', async () => {
+            new AssistGestion().render(search.value.toLowerCase(), dateField.value);
+        });
     }
 
     private export = (): void => {
@@ -392,12 +258,36 @@ export class AssistGestion {
             const exportButton: InterfaceElement = document.getElementById('export-data');
             const _dialog: InterfaceElement = document.getElementById('dialog-content');
             exportButton.addEventListener('click', async() => {
-                const _values = {
+                const _values: InterfaceElement = {
                     start: document.getElementById('start-date'),
                     end: document.getElementById('end-date'),
                     exportOption: document.getElementsByName('exportOption')
                 }
-                const marcations: any = dataPage //await GetAssistControl();
+                let rawExport = JSON.stringify({
+                    "filter": {
+                        "conditions": [
+                            {
+                                "property": "customer.id",
+                                "operator": "=",
+                                "value": `${customerId}`
+                            },
+                            {
+                                "property": "ingressDate",
+                                "operator": ">=",
+                                "value": `${_values.start.value}`
+                            },
+                            {
+                                "property": "ingressDate",
+                                "operator": "<=",
+                                "value": `${_values.end.value}`
+                            }
+                        ],
+                    },
+                    sort: "-createdDate",
+                    fetchPlan: 'full',
+                });
+                const dataRaw = await getFilterEntityData("Marcation", rawExport); //await GetAssistControl();
+                const marcations = await calculateGestionMarcation(dataRaw);
                 
                 for (let i = 0; i < _values.exportOption.length; i++) {
                     let ele: any = _values.exportOption[i]
@@ -517,43 +407,6 @@ export class AssistGestion {
             nextButton.addEventListener('click', (): void => {
                 pagesOptions(items, pageCount)
                 new AssistGestion().load(tableBody, pageCount, items)
-            })
-        }
-    }
-
-    private previewZoom = async (arrayImages: any): Promise<void> => {
-        const openButtons: InterfaceElement = document.querySelectorAll('#entity-details-zoom')
-        openButtons.forEach((openButton: InterfaceElement) => {
-            const entityId: string = openButton.dataset.entityid
-            openButton.addEventListener('click', (): void => {
-
-                renderInterfaceZoom(entityId, arrayImages)
-            })
-        })
-
-        const renderInterfaceZoom = async (entity: string, arrayImages: any): Promise<void> => {
-            let description = ''
-            for(let i = 0; i < arrayImages.length; i++){
-                if(arrayImages[i].id == entity){
-                    description = arrayImages[i].description
-                }
-            }
-            
-            const picture: InterfaceElement = document.getElementsByName(`${entity}`)
-            const close: InterfaceElement = document.getElementById("close-modalZoom");
-            const modalZoom: InterfaceElement = document.getElementById('modalZoom')
-            const editor: InterfaceElement = document.getElementById('entity-editor-container')
-            editor.style.display = 'none'
-            const img01: InterfaceElement = document.getElementById('img01')
-            const caption: InterfaceElement = document.getElementById('caption')
-            modalZoom.style.display = 'block'
-            img01.src = picture[0].currentSrc
-            caption.innerHTML = `${description}`
-
-            close.addEventListener('click', (): void => {
-                modalZoom.style.display = 'none'
-                const editor: InterfaceElement = document.getElementById('entity-editor-container')
-                editor.style.display = 'flex'
             })
         }
     }

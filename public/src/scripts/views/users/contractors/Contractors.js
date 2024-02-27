@@ -289,7 +289,7 @@ export class Contractors {
     }
     load(table, currentPage, data) {
         setUserPassword();
-        setRole();
+        //setRole()
         table.innerHTML = '';
         currentPage--;
         let start = tableRows * currentPage;
@@ -1129,6 +1129,11 @@ export async function setUserPassword() {
                     "property": "newUser",
                     "operator": "=",
                     "value": `${true}`
+                },
+                {
+                    "property": "temp",
+                    "operator": "<>",
+                    "value": ``
                 }
             ]
         }
@@ -1142,40 +1147,46 @@ export async function setUserPassword() {
         if (newUser.newUser === true && (newUser.temp !== undefined || newUser.temp !== ''))
             setPassword(raw);
     });
+    setRole(data);
 }
-export async function setRole() {
+export async function setRole(data) {
     /*const users: any = await getEntitiesData('User')
     const filterByNewUsers: any = users.filter((data: any) => data.newUser == true)
     const FCustomer: any = filterByNewUsers.filter((data: any) => `${data.customer?.id}` === `${customerId}`)
     const filterByUserType: any = FCustomer.filter((data: any) => `${data.userType}`.includes('CONTRACTOR'))
     const data: any = filterByUserType*/
-    let raw = JSON.stringify({
+    /*let raw = JSON.stringify({
         "filter": {
             "conditions": [
-                {
-                    "property": "isSuper",
-                    "operator": "=",
-                    "value": `${false}`
-                },
-                {
-                    "property": "newUser",
-                    "operator": "=",
-                    "value": `${true}`
-                },
-                {
-                    "property": "customer.id",
-                    "operator": "=",
-                    "value": `${customerId}`
-                },
-                {
-                    "property": "userType",
-                    "operator": "=",
-                    "value": `CONTRACTOR`
-                }
+              {
+                "property": "isSuper",
+                "operator": "=",
+                "value": `${false}`
+              },
+              {
+                "property": "newUser",
+                "operator": "=",
+                "value": `${true}`
+              },
+              {
+                "property": "customer.id",
+                "operator": "=",
+                "value": `${customerId}`
+              },
+              {
+                "property": "userType",
+                "operator": "=",
+                "value": `CONTRACTOR`
+              },
+              {
+                "property": "temp",
+                "operator": "<>",
+                "value": ``
+              }
             ]
         }
-    });
-    let data = await getFilterEntityData("User", raw);
+    })
+    let data = await getFilterEntityData("User", raw)*/
     data.forEach((newUser) => {
         let raw = JSON.stringify({
             "id": `${newUser.id}`,

@@ -45,6 +45,16 @@ const getEvents = async () => {
                     "property": "notificationType.name",
                     "operator": "<>",
                     "value": `Nota`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `Consigna`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `Rutina`
                 }
             ],
         },
@@ -91,6 +101,16 @@ const getEvents = async () => {
                         "property": "notificationType.name",
                         "operator": "<>",
                         "value": `Nota`
+                    },
+                    {
+                        "property": "notificationType.name",
+                        "operator": "<>",
+                        "value": `Consigna`
+                    },
+                    {
+                        "property": "notificationType.name",
+                        "operator": "<>",
+                        "value": `Rutina`
                     }
                 ]
             },
@@ -331,6 +351,16 @@ export class Events {
                                     "property": "notificationType.name",
                                     "operator": "<>",
                                     "value": `Nota`
+                                },
+                                {
+                                    "property": "notificationType.name",
+                                    "operator": "<>",
+                                    "value": `Consigna`
+                                },
+                                {
+                                    "property": "notificationType.name",
+                                    "operator": "<>",
+                                    "value": `Rutina`
                                 },
                                 {
                                     "property": "creationDate",

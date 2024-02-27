@@ -289,7 +289,7 @@ export class Clients {
     }
     load(table, currentPage, data) {
         setUserPassword();
-        setRole();
+        //setRole()
         table.innerHTML = '';
         currentPage--;
         let start = tableRows * currentPage;
@@ -1202,6 +1202,11 @@ export const setUserPassword = async () => {
                     "property": "newUser",
                     "operator": "=",
                     "value": `${true}`
+                },
+                {
+                    "property": "temp",
+                    "operator": "<>",
+                    "value": ``
                 }
             ]
         }
@@ -1215,40 +1220,46 @@ export const setUserPassword = async () => {
         if (newUser.newUser === true && (newUser.temp !== undefined || newUser.temp !== ''))
             setPassword(raw);
     });
+    setRole(data);
 };
-export async function setRole() {
+export async function setRole(data) {
     /*const users: any = await getEntitiesData('User')
     const filterByNewUsers: any = users.filter((data: any) => data.newUser === true)
     const FCustomer: any = filterByNewUsers.filter((data: any) => `${data.customer?.id}` === `${customerId}`)
     const filterByUserType: any = FCustomer.filter((data: any) => `${data.userType}`.includes('CUSTOMER'))
     const data: any = filterByUserType*/
-    let raw = JSON.stringify({
+    /*let raw = JSON.stringify({
         "filter": {
             "conditions": [
-                {
-                    "property": "isSuper",
-                    "operator": "=",
-                    "value": `${false}`
-                },
-                {
-                    "property": "newUser",
-                    "operator": "=",
-                    "value": `${true}`
-                },
-                {
-                    "property": "customer.id",
-                    "operator": "=",
-                    "value": `${customerId}`
-                },
-                {
-                    "property": "userType",
-                    "operator": "=",
-                    "value": `CUSTOMER`
-                }
+              {
+                "property": "isSuper",
+                "operator": "=",
+                "value": `${false}`
+              },
+              {
+                "property": "newUser",
+                "operator": "=",
+                "value": `${true}`
+              },
+              {
+                "property": "customer.id",
+                "operator": "=",
+                "value": `${customerId}`
+              },
+              {
+                "property": "userType",
+                "operator": "=",
+                "value": `CUSTOMER`
+              },
+              {
+                "property": "temp",
+                "operator": "<>",
+                "value": ``
+              }
             ]
         }
-    });
-    let data = await getFilterEntityData("User", raw);
+    })
+    let data = await getFilterEntityData("User", raw)*/
     data.forEach((newUser) => {
         let raw = JSON.stringify({
             "id": `${newUser.id}`,

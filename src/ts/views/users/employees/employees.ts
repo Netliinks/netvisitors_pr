@@ -155,7 +155,7 @@ export class Employees implements NUsers.IEmployees {
 
     public load(table: InterfaceElement, currentPage: number, data: any) {
         setUserPassword()
-        setRole()
+        //setRole()
         table.innerHTML = ''
         currentPage--
         let start: number = tableRows * currentPage
@@ -1242,6 +1242,11 @@ export async function setUserPassword(): Promise<any> {
                 "property": "newUser",
                 "operator": "=",
                 "value": `${true}`
+              },
+              {
+                "property": "temp",
+                "operator": "<>",
+                "value": ``
               }
             ]
         }
@@ -1256,15 +1261,16 @@ export async function setUserPassword(): Promise<any> {
         if (newUser.newUser === true && (newUser.temp !== undefined || newUser.temp !== ''))
             setPassword(raw);       
     })
+    setRole(data)
 }
 
-export async function setRole(): Promise<void> {
+export async function setRole(data: any): Promise<void> {
     /*const users: any = await getEntitiesData('User')
     const filterByNewUsers: any = users.filter((data: any) => data.newUser == true)
     const FCustomer: any = filterByNewUsers.filter((data: any) => `${data.customer?.id}` === `${customerId}`)
     const filterByUserType: any = FCustomer.filter((data: any) => `${data.userType}`.includes('EMPLOYEE'))
     const data: any = filterByUserType*/
-    let raw = JSON.stringify({
+    /*let raw = JSON.stringify({
         "filter": {
             "conditions": [
               {
@@ -1286,11 +1292,16 @@ export async function setRole(): Promise<void> {
                 "property": "userType",
                 "operator": "=",
                 "value": `EMPLOYEE`
+              },
+              {
+                "property": "temp",
+                "operator": "<>",
+                "value": ``
               }
             ]
         }
     })
-    let data = await getFilterEntityData("User", raw)
+    let data = await getFilterEntityData("User", raw)*/
     data.forEach((newUser: any) => {
         let raw: string = JSON.stringify({
             "id": `${newUser.id}`,

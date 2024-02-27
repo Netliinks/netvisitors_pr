@@ -4,89 +4,99 @@ export const exportReportPdf = (ar: any, start: any, end: any) => {
     // @ts-ignore
     window.jsPDF = window.jspdf.jsPDF;
     // @ts-ignore
-    var doc = new jsPDF('l')
-    doc.addImage("./public/src/assets/pictures/report.png", "PNG", 10, 10, 50, 15);
+    var doc = new jsPDF();
+    doc.addImage("./public/src/assets/pictures/report.png", "PNG", 10, 10, 30, 10);
     doc.setDrawColor(0, 0, 128);
-    doc.setFont(undefined, 'bold')
-    doc.setTextColor(0,0,128)
-    doc.setFontSize(25)
-    doc.text(10, 40, `Reportes`)
-    doc.setFontSize(10)
-    doc.setTextColor(0,0,0)
-    doc.setFont(undefined, 'italic')
-    doc.text(220, 40, `Fecha: Desde ${start} Hasta ${end}`)
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(0, 0, 128);
+    doc.setFontSize(25);
+    doc.text(10, 30, `Reportes`);
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, 'italic');
+    doc.text(135, 30, `Fecha: Desde ${start} Hasta ${end}`);
     //construimos cabecera del csv
-    doc.setFont(undefined, 'bold')
-    doc.line(5, 45, 290, 45);
-    doc.setFillColor(210,210,210)
-    doc.rect(5, 45, 285, 10, 'F')
-    doc.text(10, 50, "Fecha")
-    doc.text(30, 50, "Hora")
-    doc.text(50, 50, "Usuario")
-    doc.text(90, 50, "Título")
-    doc.text(140, 50, "Contenido")   
-    doc.text(240, 50, "Foto") 
-    doc.line(5, 55, 290, 55);
-    
-    let row = 60
-    let lineas = 0
-    let pagina = 1
-    doc.setTextColor(0,0,128)
-    doc.text(10, 200, `Página ${pagina}`)
+    doc.setFont(undefined, 'bold');
+    doc.line(5, 34.8, 205, 34.8);
+    doc.setFillColor(210, 210, 210);
+    doc.rect(5, 35, 200, 10, 'F');
+    doc.text(10, 40, "Fecha");
+    doc.text(30, 40, "Hora");
+    doc.text(50, 40, "Usuario");
+    doc.text(90, 40, "Título");
+    doc.text(140, 40, "Contenido");
+    doc.line(5, 45, 205, 45);
+    let row = 50;
+    let pagina = 1;
+    doc.setTextColor(0, 0, 128);
+    doc.text(10, 290, `Página ${pagina}`);
     //resto del contenido
     for (let i = 0; i < ar.length; i++) {
-        let report = ar[i]
-        doc.setFontSize(9)
-        doc.setFont(undefined, 'normal')
-        doc.setTextColor(0,0,0)
-        doc.text(10, row+15, `${report.fecha}`)
-        doc.text(30, row+15, `${report.hora}`)
-        doc.text(50, row+15, `${report.usuario}`)
-        doc.text(90, row+15, `${report.titulo}`)
-        var description = report.contenido.split("\n").join("(salto)")
-        //console.log(description.length)
-        if(description.length > 550)
-          doc.setFontSize(7) 
-        var lMargin=140; //left margin in mm
-        var rMargin=15; //right margin in mm
-        var pdfInMM=250//210;  // width of A4 in mm
-        var paragraph =doc.splitTextToSize(description, (pdfInMM-lMargin-rMargin));
-        doc.text(lMargin,row,paragraph);
-        doc.line(5, row+30, 290, row+30);
-        doc.addImage(`${report.imagen}`, "JPEG", 240, row-2, 50, 30);
-        row += 34
-        let limitLineas = 5
-        if(pagina == 1) limitLineas = 3
-        if(lineas >= limitLineas){ 
-            doc.addPage()
-            lineas=0
-            row = 30
-            pagina+=1
-            doc.setFont(undefined, 'bold')
-            doc.setFontSize(10)
-            //construimos cabecera del csv
-            doc.line(5, 15, 290, 15)
-            doc.setFillColor(210,210,210);
-            doc.rect(5, 15, 285, 10, 'F');
-            doc.text(10, 20, "Fecha")
-            doc.text(30, 20, "Hora")
-            doc.text(50, 20, "Usuario")
-            doc.text(90, 20, "Título")
-            doc.text(140, 20, "Contenido")   
-            doc.text(240, 20, "Foto") 
-            doc.line(5, 25, 290, 25);
-            doc.setTextColor(0,0,128)
-            doc.text(10, 200, `Página ${pagina}`)
-        }
-        lineas++
+        let report = ar[i];
+        let rowTitle = 0;
+        let rowDescription = 0;
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        doc.text(10, row, `${report.fecha}`);
+        doc.text(30, row, `${report.hora}`);
+        var lMargin = 50; //left margin in mm
+        var rMargin = 5; //right margin in mm
+        var pdfInMM = 90; //210;  // width of A4 in mm
+        var paragraph = doc.splitTextToSize(report.usuario, (pdfInMM - lMargin - rMargin));
+        doc.text(lMargin, row, paragraph);
 
+        lMargin = 90; //left margin in mm
+        rMargin = 5; //right margin in mm
+        pdfInMM = 140; //210;  // width of A4 in mm
+        paragraph = doc.splitTextToSize(report.titulo, (pdfInMM - lMargin - rMargin));
+        doc.text(lMargin, row, paragraph);
+        rowTitle = calculateRow(report.titulo.length,"titulo");
+
+        lMargin = 140; //left margin in mm
+        rMargin = 5; //right margin in mm
+        pdfInMM = 210; //210;  // width of A4 in mm
+        paragraph = doc.splitTextToSize(report.contenido, (pdfInMM - lMargin - rMargin));
+        doc.text(lMargin, row, paragraph);
+        rowDescription = calculateRow(report.contenido.length,"parrafo");
+
+        rowTitle > rowDescription ? row += rowTitle : row += rowDescription
+        if(report.imagen != ''){
+            doc.addImage(`${report.imagen}`, "JPEG", 80, row, 50, 30);
+            row+=35
+        }
+        doc.setDrawColor(210, 210, 210);
+        doc.line(5, row, 205, row);
+        if ((row+newDataBlock(ar,i)) > 280) {
+            doc.addPage();
+            row = 30;
+            pagina += 1;
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'italic');
+            doc.text(135, 10, `Fecha: Desde ${start} Hasta ${end}`);
+            doc.setFont(undefined, 'bold');
+            //construimos cabecera del csv
+            doc.setDrawColor(0, 0, 128);
+            doc.line(5, 15, 205, 15);
+            doc.setFillColor(210, 210, 210);
+            doc.rect(5, 15, 200, 10, 'F');
+            doc.text(10, 20, "Fecha");
+            doc.text(30, 20, "Hora");
+            doc.text(50, 20, "Usuario");
+            doc.text(90, 20, "Título");
+            doc.text(140, 20, "Contenido");
+            doc.line(5, 25, 205, 25);
+            doc.setTextColor(0, 0, 128);
+            doc.text(10, 290, `Página ${pagina}`);
+        }else{
+            row += 5;
+        }
     }
     // Save the PDF
-    var d = new Date()
-    var title = "log_Reportes_"+ d.getDate() + "_" + (d.getMonth()+1) + "_" + d.getFullYear() +`.pdf`;
+    var d = new Date();
+    var title = "log_Reportes_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.pdf`;
     doc.save(title);
-
-}
+};
 
 export const exportReportCsv = (ar: any, start: any, end: any) => {
     let rows = [];
@@ -192,4 +202,34 @@ const generateFile = (ar: any, title: string, extension: string) => {
         //el navegador no admite esta opción
         alert("Su navegador no permite esta acción");
       }
+}
+
+const calculateRow = (length: any, mode: any) => {
+  let row = 0;
+  let limit = 0; // limite de lineas
+  if(mode=="parrafo"){
+      limit = 47;
+  }else if(mode=="titulo"){
+      limit = 30;
+  }
+  let lineCount = Math.ceil(length / limit);
+  for(let i = 1; i <= lineCount; i++){
+      if(length <= (limit * i)){  //124 caracteres cada linea aprox en total margen A4
+          row += (4*i);
+      }
+  }
+  return row;
+}
+
+const newDataBlock = (array: any, index: any) => {
+  let row = 0;
+  if(array[index+1] != undefined){
+      row+=5;
+      let rowTitle = calculateRow(array[index+1]?.titulo.length,"titulo");
+      let rowDescription = calculateRow(array[index+1]?.contenido.length,"parrafo");
+      rowTitle > rowDescription ? row += rowTitle : row += rowDescription;
+      if(array[index+1]?.imagen != '')
+          row+=35
+  }
+  return row;
 }
