@@ -8,7 +8,7 @@ import { getEntityData, getFilterEntityData, getFilterEntityCount, getFile } fro
 import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, pageNumbers, fillBtnPagination } from "../../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
-import { exportVehicularCsv, exportVehicularPdf, exportVehicularXls } from "../../../../exportFiles/vehiculars.js";
+import { exportVehiEgressPdf } from "../../../../exportFiles/vehicular-egress.js";
 import { InterfaceElement, InterfaceElementCollection } from "../../../../types.js";
 // Local configs
 const tableRows = Config.tableRows;
@@ -122,7 +122,7 @@ export class VehicularsExit {
         this.searchNotes(tableBody/*, eventsArray*/)
         new filterDataByHeaderType().filter()
         this.pagination(eventsArray, tableRows, infoPage.currentPage)
-        this.export()
+        //this.export()
 
         // Rendering icons
     }
@@ -159,6 +159,10 @@ export class VehicularsExit {
                 <td id="table-date">${vehicular?.egressTime ?? ''}</td>
 
                 <td>
+                    <button class="button" id="print-entity" data-entityId="${vehicular.id}">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </button>
+
                     <button class="button" id="entity-details" data-entityId="${vehicular.id}">
                         <i class="table_icon fa-regular fa-magnifying-glass"></i>
                     </button>
@@ -170,6 +174,7 @@ export class VehicularsExit {
                 // fixDate()
             }
             this.previewEvent()
+            this.print()
         }
     }
 
@@ -240,7 +245,8 @@ export class VehicularsExit {
                 endDate: document.getElementById('marking-end-date'),
                 endTime: document.getElementById('marking-end-time'),
                 endGuardID: document.getElementById('marking-end-guard-id'),
-                endGuardName: document.getElementById('marking-end-guard-name')
+                endGuardName: document.getElementById('marking-end-guard-name'),
+                endManagerName: document.getElementById('marking-end-manager-name'),
             }
 
             //_values.status.innerText = markingData.visitState.name;
@@ -266,7 +272,8 @@ export class VehicularsExit {
             _values.endTime.value = markingData?.egressTime ?? '';
             _values.endGuardID.value = markingData.egressIssued?.username ?? '';
             _values.endGuardName.value = markingData.egressIssued?.firstName ?? '' + ' ' + markingData.egressIssued?.lastName ?? '';
-            if (markingData?.image1 !== undefined || markingData?.image2 !== undefined || markingData?.image3 !== undefined || markingData?.image4 !== undefined || markingData?.image5 !== undefined || markingData?.image6 !== undefined || markingData?.image7 !== undefined || markingData?.image8 !== undefined) {
+            _values.endManagerName.value = markingData.manager?.name ?? '';
+            if (markingData?.image1 !== undefined || markingData?.image2 !== undefined || markingData?.image3 !== undefined || markingData?.image4 !== undefined || markingData?.image5 !== undefined || markingData?.image6 !== undefined || markingData?.image7 !== undefined || markingData?.image8 !== undefined || markingData?.image9 !== undefined || markingData?.image10 !== undefined || markingData?.image11 !== undefined || markingData?.image12 !== undefined) {
                 let images = [];
                 if (markingData?.image1 !== undefined) {
                     let details = {
@@ -340,6 +347,42 @@ export class VehicularsExit {
                     };
                     images.push(details);
                 }
+                if (markingData?.image9 !== undefined) {
+                    let details = {
+                        "image": `${await getFile(markingData.image9)}`,
+                        "description": `Imagen 9 - ${markingData?.dni ?? ''}`,
+                        "icon": "mobile",
+                        "id": "image9"
+                    };
+                    images.push(details);
+                }
+                if (markingData?.image10 !== undefined) {
+                    let details = {
+                        "image": `${await getFile(markingData.image10)}`,
+                        "description": `Imagen 10 - ${markingData?.dni ?? ''}`,
+                        "icon": "mobile",
+                        "id": "image10"
+                    };
+                    images.push(details);
+                }
+                if (markingData?.image11 !== undefined) {
+                    let details = {
+                        "image": `${await getFile(markingData.image11)}`,
+                        "description": `Imagen 11 - ${markingData?.dni ?? ''}`,
+                        "icon": "mobile",
+                        "id": "image11"
+                    };
+                    images.push(details);
+                }
+                if (markingData?.image12 !== undefined) {
+                    let details = {
+                        "image": `${await getFile(markingData.image12)}`,
+                        "description": `Imagen 12 - ${markingData?.dni ?? ''}`,
+                        "icon": "mobile",
+                        "id": "image12"
+                    };
+                    images.push(details);
+                }
                 for (let i = 0; i < images.length; i++) {
                     _values.controlImages.innerHTML += `
                         <label><i class="fa-solid fa-${images[i].icon}"></i> ${images[i].description}</label>
@@ -358,8 +401,20 @@ export class VehicularsExit {
             this.closeRightSidebar()
         }
     }
+    private print = (): void => {
+        const print: InterfaceElement = document.querySelectorAll('#print-entity')
+        print.forEach((print: InterfaceElement) => {
 
-    private export = (): void => {
+            const entityId = print.dataset.entityid
+
+            print.addEventListener('click', async (): Promise<void> => {
+                const data: any = await getEntityData('Vehicular', entityId)
+                exportVehiEgressPdf(data)
+            })
+        })
+
+    }
+    /*private export = (): void => {
         const exportNotes: InterfaceElement = document.getElementById('export-entities');
             exportNotes.addEventListener('click', async() => {
                 this.dialogContainer.style.display = 'block';
@@ -484,7 +539,7 @@ export class VehicularsExit {
                     new CloseDialog().x(_dialog);
                 };
             });
-    };
+    };*/
     private previewZoom = async (arrayImages:any) => {
         const openButtons: InterfaceElement = document.querySelectorAll('#entity-details-zoom');
         openButtons.forEach((openButton: any) => {

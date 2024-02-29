@@ -15,7 +15,7 @@ export const UIContentLayout = `
                     id="btnSearch">
                     <i class="fa-solid fa-search"></i>
                 </button>
-                <button class="datatable_button import_user" id="export-entities">Exportar</button>
+                <!-- <button class="datatable_button import_user" id="export-entities">Exportar</button> -->
             </div>
         </div>
 
@@ -113,10 +113,6 @@ export const UIRightSidebar = `
         <input type="text" id="marking-observation" class="input_filled" readonly>
     </div>
     <br>
-    <h3>Galería</h3>
-
-    <div id="galeria">
-    </div>
     
     <!-- Start marking -->
     <!--
@@ -165,6 +161,15 @@ export const UIRightSidebar = `
         <input type="text" id="marking-end-guard-name" class="input_filled" readonly>
     </div>
     <br>
+    <div class="input_detail">
+        <label for="marking-end-manager-name"><i class="fa-solid fa-user-police"></i></label>
+        <input type="text" id="marking-end-manager-name" class="input_filled" readonly>
+    </div>
+    <br>
+    <h3>Galería</h3>
+
+    <div id="galeria">
+    </div>
 </div>
 </div>
 `;
