@@ -10,7 +10,7 @@ import { InterfaceElement, InterfaceElementCollection } from "../../../types.js"
 import { UIContentLayout, UIRightSidebar } from "./Layout.js"
 import { UITableSkeletonTemplate } from "./Template.js"
 import { exportVisitCsv, exportVisitPdf, exportVisitXls } from "../../../exportFiles/visits.js"
-
+import { exportVisitIndPdf } from "../../../exportFiles/visit-ingress.js";
 // Local configs
 const tableRows = Config.tableRows
 let currentPage = Config.currentPage
@@ -162,6 +162,9 @@ export class Visits {
                     <td class="tag"><span>${visit.visitState.name}</span></td>
 
                     <td>
+                        <button class="button" id="print-entity" data-entityId="${visit.id}">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </button>
                         <button class="button" id="entity-details" data-entityId="${visit.id}">
                             <i class="table_icon fa-regular fa-magnifying-glass"></i>
                         </button>
@@ -170,6 +173,7 @@ export class Visits {
                 tableBody.appendChild(row)
                 drawTagsIntoTables()
             }
+            this.print();
             this.previewVisit()
             //this.fixCreatedDate()
         }
@@ -338,7 +342,16 @@ export class Visits {
             date.innerText = separateDateAndTime[0]
         })
     }*/
-    
+    private print = () => {
+        const print: InterfaceElement = document.querySelectorAll('#print-entity');
+        print.forEach((print: any) => {
+            const entityId = print.dataset.entityid;
+            print.addEventListener('click', async () => {
+                const data = await getEntityData('Visit', entityId);
+                exportVisitIndPdf(data);
+            });
+        });
+    };
     private export = (): void => {
         const exportNotes: InterfaceElement = document.getElementById('export-entities');
         exportNotes.addEventListener('click', async() => {
