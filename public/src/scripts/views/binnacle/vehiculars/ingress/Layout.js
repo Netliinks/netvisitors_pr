@@ -15,7 +15,7 @@ export const UIContentLayout = `
                     id="btnSearch">
                     <i class="fa-solid fa-search"></i>
                 </button>
-                <!-- <button class="datatable_button import_user" id="export-entities">Exportar</button> -->
+                <button class="datatable_button import_user" id="export-entities">Exportar</button>
             </div>
         </div>
 
@@ -106,6 +106,11 @@ export const UIRightSidebar = `
     <div class="input_detail">
         <label for="marking-containerNro"><i class="fa-solid fa-truck-container"></i> Nro. Contenedor:</label>
         <input type="text" id="marking-containerNro" class="input_filled" readonly>
+    </div>
+    <br>
+    <div class="input_detail">
+        <label for="marking-department"><i class="fa-solid fa-building"></i> Departamento:</label>
+        <input type="text" id="marking-department" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">

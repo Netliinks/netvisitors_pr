@@ -8,7 +8,7 @@ import { getEntityData, getFilterEntityData, getFilterEntityCount, getFile } fro
 import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, pageNumbers, fillBtnPagination } from "../../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
-import { exportVehiIngressPdf } from "../../../../exportFiles/vehicular-ingress.js";
+import { exportVehiIngressPdf, exportVehiIngressCsv, exportVehiIngressXls, exportVehiIngressIndPdf } from "../../../../exportFiles/vehicular-ingress.js";
 import { InterfaceElement, InterfaceElementCollection } from "../../../../types.js";
 // Local configs
 const tableRows = Config.tableRows;
@@ -122,7 +122,7 @@ export class VehicularsIng {
         this.searchNotes(tableBody/*, eventsArray*/)
         new filterDataByHeaderType().filter()
         this.pagination(eventsArray, tableRows, infoPage.currentPage)
-        //this.export()
+        this.export()
 
         // Rendering icons
     }
@@ -232,6 +232,7 @@ export class VehicularsIng {
                 type: document.getElementById('marking-type'),
                 unregisteredDriver: document.getElementById('marking-unregisteredDriver'),
                 containerNro: document.getElementById('marking-containerNro'),
+                department: document.getElementById('marking-department'),
                 observation: document.getElementById('marking-observation'),
                 //dayManager: document.getElementById('marking-dayManager'),
                 //nightManager: document.getElementById('marking-nightManager'),
@@ -258,6 +259,7 @@ export class VehicularsIng {
             _values.type.value = markingData?.vehiMarcType ?? '';
             _values.unregisteredDriver.value = markingData?.unregisteredDriver ?? '';
             _values.containerNro.value = markingData?.containerNro ?? '';
+            _values.department.value = markingData?.department?.name ?? '';
             _values.observation.value = markingData?.observation ?? '';
             //_values.dayManager.value = markingData?.dayManager ?? '';
             //_values.nightManager.value = markingData?.nightManager ?? '';
@@ -408,13 +410,13 @@ export class VehicularsIng {
 
             print.addEventListener('click', async (): Promise<void> => {
                 const data: any = await getEntityData('Vehicular', entityId)
-                exportVehiIngressPdf(data)
+                exportVehiIngressIndPdf(data)
             })
         })
 
     }
 
-    /*private export = (): void => {
+    private export = (): void => {
         const exportNotes: InterfaceElement = document.getElementById('export-entities');
             exportNotes.addEventListener('click', async() => {
                 this.dialogContainer.style.display = 'block';
@@ -519,15 +521,15 @@ export class VehicularsIng {
                             if (ele.checked) {
                                 if (ele.value == "xls") {
                                     // @ts-ignore
-                                    //exportVehicularXls(vehiculars, _values.start.value, _values.end.value);
+                                    exportVehiIngressXls(vehiculars, _values.start.value, _values.end.value);
                                 }
                                 else if (ele.value == "csv") {
                                     // @ts-ignore
-                                    //exportVehicularCsv(vehiculars, _values.start.value, _values.end.value);
+                                    exportVehiIngressCsv(vehiculars, _values.start.value, _values.end.value);
                                 }
                                 else if (ele.value == "pdf") {
                                     // @ts-ignore
-                                    //exportVehicularPdf(vehiculars, _values.start.value, _values.end.value);
+                                    exportVehiIngressPdf(vehiculars, _values.start.value, _values.end.value);
                                 }
                             }
                         }
@@ -539,7 +541,7 @@ export class VehicularsIng {
                     new CloseDialog().x(_dialog);
                 };
             });
-    };*/
+    };
     private previewZoom = async (arrayImages:any) => {
         const openButtons: InterfaceElement = document.querySelectorAll('#entity-details-zoom');
         openButtons.forEach((openButton: any) => {

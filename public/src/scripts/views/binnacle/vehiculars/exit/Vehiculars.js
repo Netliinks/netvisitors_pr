@@ -5,10 +5,10 @@
 //
 import { Config } from "../../../../Configs.js";
 import { getEntityData, getFilterEntityData, getFilterEntityCount, getFile } from "../../../../endpoints.js";
-import { CloseDialog, renderRightSidebar, filterDataByHeaderType, pageNumbers, fillBtnPagination } from "../../../../tools.js";
+import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, pageNumbers, fillBtnPagination } from "../../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
-import { exportVehiEgressPdf } from "../../../../exportFiles/vehicular-egress.js";
+import { exportVehiSalCsv, exportVehiSalXls, exportVehiSalPdf, exportVehiSalIndPdf } from "../../../../exportFiles/vehicular-egress.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
@@ -114,7 +114,7 @@ export class VehicularsExit {
             this.searchNotes(tableBody /*, eventsArray*/);
             new filterDataByHeaderType().filter();
             this.pagination(eventsArray, tableRows, infoPage.currentPage);
-            //this.export()
+            this.export();
             // Rendering icons
         };
         this.load = (tableBody, currentPage, events) => {
@@ -216,6 +216,7 @@ export class VehicularsExit {
                     type: document.getElementById('marking-type'),
                     unregisteredDriver: document.getElementById('marking-unregisteredDriver'),
                     containerNro: document.getElementById('marking-containerNro'),
+                    department: document.getElementById('marking-department'),
                     observation: document.getElementById('marking-observation'),
                     //dayManager: document.getElementById('marking-dayManager'),
                     //nightManager: document.getElementById('marking-nightManager'),
@@ -241,6 +242,7 @@ export class VehicularsExit {
                 _values.type.value = markingData?.vehiMarcType ?? '';
                 _values.unregisteredDriver.value = markingData?.unregisteredDriver ?? '';
                 _values.containerNro.value = markingData?.containerNro ?? '';
+                _values.department.value = markingData?.department?.name ?? '';
                 _values.observation.value = markingData?.observation ?? '';
                 //_values.dayManager.value = markingData?.dayManager ?? '';
                 //_values.nightManager.value = markingData?.nightManager ?? '';
@@ -389,136 +391,132 @@ export class VehicularsExit {
                 const entityId = print.dataset.entityid;
                 print.addEventListener('click', async () => {
                     const data = await getEntityData('Vehicular', entityId);
-                    exportVehiEgressPdf(data);
+                    exportVehiSalIndPdf(data);
                 });
             });
         };
-        /*private export = (): void => {
-            const exportNotes: InterfaceElement = document.getElementById('export-entities');
-                exportNotes.addEventListener('click', async() => {
-                    this.dialogContainer.style.display = 'block';
-                    this.dialogContainer.innerHTML = `
-                        <div class="dialog_content" id="dialog-content">
-                            <div class="dialog">
-                                <div class="dialog_container padding_8">
-                                    <div class="dialog_header">
-                                        <h2>Seleccionar la fecha</h2>
-                                    </div>
-    
-                                    <div class="dialog_message padding_8">
-                                        <div class="form_group">
-                                            <div class="form_input">
-                                                <label class="form_label" for="start-date">Desde:</label>
-                                                <input type="date" class="input_date input_date-start" id="start-date" name="start-date">
-                                            </div>
-                            
-                                            <div class="form_input">
-                                                <label class="form_label" for="end-date">Hasta:</label>
-                                                <input type="date" class="input_date input_date-end" id="end-date" name="end-date">
-                                            </div>
-    
-                                            <label for="exportCsv">
-                                                <input type="radio" id="exportCsv" name="exportOption" value="csv" /> CSV
-                                            </label>
-    
-                                            <label for="exportXls">
-                                                <input type="radio" id="exportXls" name="exportOption" value="xls" checked /> XLS
-                                            </label>
-    
-                                            <label for="exportPdf">
-                                                <input type="radio" id="exportPdf" name="exportOption" value="pdf" /> PDF
-                                            </label>
+        this.export = () => {
+            const exportNotes = document.getElementById('export-entities');
+            exportNotes.addEventListener('click', async () => {
+                this.dialogContainer.style.display = 'block';
+                this.dialogContainer.innerHTML = `
+                    <div class="dialog_content" id="dialog-content">
+                        <div class="dialog">
+                            <div class="dialog_container padding_8">
+                                <div class="dialog_header">
+                                    <h2>Seleccionar la fecha</h2>
+                                </div>
+
+                                <div class="dialog_message padding_8">
+                                    <div class="form_group">
+                                        <div class="form_input">
+                                            <label class="form_label" for="start-date">Desde:</label>
+                                            <input type="date" class="input_date input_date-start" id="start-date" name="start-date">
                                         </div>
+                        
+                                        <div class="form_input">
+                                            <label class="form_label" for="end-date">Hasta:</label>
+                                            <input type="date" class="input_date input_date-end" id="end-date" name="end-date">
+                                        </div>
+
+                                        <label for="exportCsv">
+                                            <input type="radio" id="exportCsv" name="exportOption" value="csv" /> CSV
+                                        </label>
+
+                                        <label for="exportXls">
+                                            <input type="radio" id="exportXls" name="exportOption" value="xls" checked /> XLS
+                                        </label>
+
+                                        <label for="exportPdf">
+                                            <input type="radio" id="exportPdf" name="exportOption" value="pdf" /> PDF
+                                        </label>
                                     </div>
-    
-                                    <div class="dialog_footer">
-                                        <button class="btn btn_primary" id="cancel">Cancelar</button>
-                                        <button class="btn btn_danger" id="export-data">Exportar</button>
-                                    </div>
+                                </div>
+
+                                <div class="dialog_footer">
+                                    <button class="btn btn_primary" id="cancel">Cancelar</button>
+                                    <button class="btn btn_danger" id="export-data">Exportar</button>
                                 </div>
                             </div>
                         </div>
-                    `;
-                    let fecha: any = new Date(); //Fecha actual
-                    let mes: any = fecha.getMonth()+1; //obteniendo mes
-                    let dia: any = fecha.getDate(); //obteniendo dia
-                    let anio: any = fecha.getFullYear(); //obteniendo año
-                    if(dia<10)
-                        dia='0'+dia; //agrega cero si el menor de 10
-                    if(mes<10)
-                        mes='0'+mes //agrega cero si el menor de 10
-                    // @ts-ignore
-                    document.getElementById("start-date").value = anio+"-"+mes+"-"+dia;
-                    // @ts-ignore
-                    document.getElementById("end-date").value = anio+"-"+mes+"-"+dia;
-                    inputObserver();
-                    const _closeButton: InterfaceElement = document.getElementById('cancel');
-                    const exportButton: InterfaceElement = document.getElementById('export-data');
-                    const _dialog: InterfaceElement = document.getElementById('dialog-content');
-                    exportButton.addEventListener('click', async() => {
-                        const _values: any = {
-                            start: document.getElementById('start-date'),
-                            end: document.getElementById('end-date'),
-                            exportOption: document.getElementsByName('exportOption')
-                        }
-                        let rawExport = JSON.stringify({
-                            "filter": {
-                                "conditions": [
-                                  {
+                    </div>
+                `;
+                let fecha = new Date(); //Fecha actual
+                let mes = fecha.getMonth() + 1; //obteniendo mes
+                let dia = fecha.getDate(); //obteniendo dia
+                let anio = fecha.getFullYear(); //obteniendo año
+                if (dia < 10)
+                    dia = '0' + dia; //agrega cero si el menor de 10
+                if (mes < 10)
+                    mes = '0' + mes; //agrega cero si el menor de 10
+                // @ts-ignore
+                document.getElementById("start-date").value = anio + "-" + mes + "-" + dia;
+                // @ts-ignore
+                document.getElementById("end-date").value = anio + "-" + mes + "-" + dia;
+                inputObserver();
+                const _closeButton = document.getElementById('cancel');
+                const exportButton = document.getElementById('export-data');
+                const _dialog = document.getElementById('dialog-content');
+                exportButton.addEventListener('click', async () => {
+                    const _values = {
+                        start: document.getElementById('start-date'),
+                        end: document.getElementById('end-date'),
+                        exportOption: document.getElementsByName('exportOption')
+                    };
+                    let rawExport = JSON.stringify({
+                        "filter": {
+                            "conditions": [
+                                {
                                     "property": "customer.id",
                                     "operator": "=",
                                     "value": `${customerId}`
-                                  },
-                                  {
+                                },
+                                {
                                     "property": "vehiMarcType",
                                     "operator": "=",
                                     "value": `SALIDA`
-                                  },
-                                  {
-                                    "property": "ingressDate",
+                                },
+                                {
+                                    "property": "egressDate",
                                     "operator": ">=",
                                     "value": `${_values.start.value}`
-                                  },
-                                  {
-                                    "property": "ingressDate",
+                                },
+                                {
+                                    "property": "egressDate",
                                     "operator": "<=",
                                     "value": `${_values.end.value}`
-                                  }
-                                ],
-                                
-                            },
-                            sort: "-createdDate",
-                            fetchPlan: 'full',
-                            
-                        })
-                        const vehiculars = await getFilterEntityData("Vehicular", rawExport) //await GetVehiculars();
-                        for (let i = 0; i < _values.exportOption.length; i++) {
-                            let ele: any = _values.exportOption[i];
-                            if (ele.type = "radio") {
-                                if (ele.checked) {
-                                    if (ele.value == "xls") {
-                                        // @ts-ignore
-                                        exportVehicularXls(vehiculars, _values.start.value, _values.end.value);
-                                    }
-                                    else if (ele.value == "csv") {
-                                        // @ts-ignore
-                                        exportVehicularCsv(vehiculars, _values.start.value, _values.end.value);
-                                    }
-                                    else if (ele.value == "pdf") {
-                                        // @ts-ignore
-                                        exportVehicularPdf(vehiculars, _values.start.value, _values.end.value);
-                                    }
+                                }
+                            ],
+                        },
+                        sort: "-createdDate",
+                        fetchPlan: 'full',
+                    });
+                    const vehiculars = await getFilterEntityData("Vehicular", rawExport); //await GetVehiculars();
+                    for (let i = 0; i < _values.exportOption.length; i++) {
+                        let ele = _values.exportOption[i];
+                        if (ele.type = "radio") {
+                            if (ele.checked) {
+                                if (ele.value == "xls") {
+                                    // @ts-ignore
+                                    exportVehiSalXls(vehiculars, _values.start.value, _values.end.value);
+                                }
+                                else if (ele.value == "csv") {
+                                    // @ts-ignore
+                                    exportVehiSalCsv(vehiculars, _values.start.value, _values.end.value);
+                                }
+                                else if (ele.value == "pdf") {
+                                    // @ts-ignore
+                                    exportVehiSalPdf(vehiculars, _values.start.value, _values.end.value);
                                 }
                             }
                         }
-                        
-                        
-                    });
-                    _closeButton.onclick = () => {
-                        new CloseDialog().x(_dialog);
-                    };
+                    }
                 });
-        };*/
+                _closeButton.onclick = () => {
+                    new CloseDialog().x(_dialog);
+                };
+            });
+        };
         this.previewZoom = async (arrayImages) => {
             const openButtons = document.querySelectorAll('#entity-details-zoom');
             openButtons.forEach((openButton) => {
