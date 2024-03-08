@@ -110,7 +110,7 @@ export const UIRightSidebar = `
 
   <div class="material_input">
     <input type="text" id="visit-authorizedby" autocomplete="none" class="input_filled">
-    <label for="visit-authorizedby"><i class="fa-solid fa-shield"></i> Autorizado por</label>
+    <label for="visit-authorizedby"><i class="fa-solid fa-shield"></i> Encargado / Autorizado</label>
   </div>
 
   <div class="material_input">

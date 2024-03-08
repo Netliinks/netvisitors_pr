@@ -223,7 +223,7 @@ export class Visits {
             visitReason.value = entityData?.reason
 
             const visitAutorizedBy: InterfaceElement = document.getElementById('visit-authorizedby')
-            visitAutorizedBy.value = entityData?.authorizer
+            visitAutorizedBy.value = entityData.type == "Guardia" ? entityData?.manager?.name ?? '' : entityData?.authorizer ?? '';
 
             const visitStatus: InterfaceElement = document.getElementById('visit-status')
             visitStatus.innerText = entityData.visitState.name

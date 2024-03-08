@@ -204,7 +204,7 @@ export class Visits {
                 const visitReason = document.getElementById('visit-reason');
                 visitReason.value = entityData?.reason;
                 const visitAutorizedBy = document.getElementById('visit-authorizedby');
-                visitAutorizedBy.value = entityData?.authorizer;
+                visitAutorizedBy.value = entityData.type == "Guardia" ? entityData?.manager?.name ?? '' : entityData?.authorizer ?? '';
                 const visitStatus = document.getElementById('visit-status');
                 visitStatus.innerText = entityData.visitState.name;
                 const visitCitadel = document.getElementById('visit-citadel');
