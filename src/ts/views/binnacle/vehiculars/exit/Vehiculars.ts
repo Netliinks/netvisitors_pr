@@ -68,6 +68,11 @@ const GetVehiculars = async () => {
                         "property": "driver",
                         "operator": "contains",
                         "value": `${infoPage.search.toLowerCase()}`
+                      },
+                      {
+                        "property": "containerNro",
+                        "operator": "contains",
+                        "value": `${infoPage.search.toLowerCase()}`
                       }
                     ]
                   },
