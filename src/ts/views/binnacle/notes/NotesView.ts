@@ -9,7 +9,7 @@ import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeader
 import { InterfaceElement, InterfaceElementCollection } from "../../../types.js"
 import { UIContentLayout, UIExportSidebar, UIRightSidebar } from "./Layout.js"
 import { UITableSkeletonTemplate } from "./Template.js"
-import { exportReportCsv, exportReportPdf, exportReportXls } from "../../../exportFiles/reports.js"
+import { exportReportCsv, exportReportPdf, exportReportXls, exportReportIndPdf } from "../../../exportFiles/reports.js"
 
 // Local configs
 const tableRows = Config.tableRows
@@ -144,6 +144,10 @@ export class Notes {
                     <td>${note.content}</td>
                     <td id="table-date">${noteCreationDate}</td>
                     <td>
+                        <button class="button" id="print-entity" data-entityId="${note.id}">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </button>
+                        
                         <button class="button" id="entity-details" data-entityId="${note.id}">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
@@ -156,9 +160,19 @@ export class Notes {
             }
         }
         this.previewNote()
+        this.print();
         //renderTimeStamp()
     }
-
+    private print = () => {
+        const print = document.querySelectorAll('#print-entity');
+        print.forEach((print: any) => {
+            const entityId = print.dataset.entityid;
+            print.addEventListener('click', async () => {
+                const data = await getEntityData('Note', entityId);
+                exportReportIndPdf(data);
+            });
+        });
+    };
     private searchNotes = async (tableBody: InterfaceElement /*, notes: any*/) => {
         const search: InterfaceElement = document.getElementById('search')
         const btnSearch: InterfaceElement = document.getElementById('btnSearch')
