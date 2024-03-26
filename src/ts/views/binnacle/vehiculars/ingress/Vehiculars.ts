@@ -19,81 +19,165 @@ let infoPage = {
     count: 0,
     offset: Config.offset,
     currentPage: currentPage,
-    search: ""
+    search: "",
+    moreSearch: {
+        department:"Todos"
+    }
 }
 let dataPage: any
 const GetVehiculars = async () => {
     //const vehicularRaw = await getEntitiesData('Vehicular');
     //const vehicular = vehicularRaw.filter((data: any) => data.customer?.id === `${customerId}`);
-    let raw = JSON.stringify({
-        "filter": {
-            "conditions": [
-              {
-                "property": "customer.id",
-                "operator": "=",
-                "value": `${customerId}`
-              },
-              {
-                "property": "vehiMarcType",
-                "operator": "=",
-                "value": `INGRESO`
-              }
-            ],
-            
-        }, 
-        sort: "-createdDate",
-        limit: Config.tableRows,
-        offset: infoPage.offset,
-        fetchPlan: 'full',
-        
-    })
-    if(infoPage.search != ""){
+    let raw;
+    if(infoPage.moreSearch.department != null && infoPage.moreSearch.department != 'null'){
         raw = JSON.stringify({
             "filter": {
                 "conditions": [
-                  {
-                    "group": "OR",
-                    "conditions": [
-                      {
-                        "property": "licensePlate",
-                        "operator": "contains",
-                        "value": `${infoPage.search.toLowerCase()}`
-                      },
-                      {
-                        "property": "dni",
-                        "operator": "contains",
-                        "value": `${infoPage.search.toLowerCase()}`
-                      },
-                      {
-                        "property": "driver",
-                        "operator": "contains",
-                        "value": `${infoPage.search.toLowerCase()}`
-                      },
-                      {
-                        "property": "containerNro",
-                        "operator": "contains",
-                        "value": `${infoPage.search.toLowerCase()}`
-                      }
-                    ]
-                  },
-                  {
-                    "property": "customer.id",
-                    "operator": "=",
-                    "value": `${customerId}`
-                  },
-                  {
-                    "property": "vehiMarcType",
-                    "operator": "=",
-                    "value": `INGRESO`
-                  }
-                ]
-              },
+                    {
+                        "property": "customer.id",
+                        "operator": "=",
+                        "value": `${customerId}`
+                    },
+                    {
+                        "property": "vehiMarcType",
+                        "operator": "=",
+                        "value": `INGRESO`
+                    },
+                    {
+                        "property": "department.id",
+                        "operator": "=",
+                        "value": `${infoPage.moreSearch.department}`
+                    }
+                ],
+            },
             sort: "-createdDate",
             limit: Config.tableRows,
             offset: infoPage.offset,
             fetchPlan: 'full',
-            
-        })
+        });
+        
+    }else{
+        raw = JSON.stringify({
+            "filter": {
+                "conditions": [
+                    {
+                        "property": "customer.id",
+                        "operator": "=",
+                        "value": `${customerId}`
+                    },
+                    {
+                        "property": "vehiMarcType",
+                        "operator": "=",
+                        "value": `INGRESO`
+                    }
+                ],
+            },
+            sort: "-createdDate",
+            limit: Config.tableRows,
+            offset: infoPage.offset,
+            fetchPlan: 'full',
+        });
+    }
+
+    if (infoPage.search != "") {
+        if(infoPage.moreSearch.department != null && infoPage.moreSearch.department != 'null'){
+            raw = JSON.stringify({
+                "filter": {
+                    "conditions": [
+                        {
+                            "group": "OR",
+                            "conditions": [
+                                {
+                                    "property": "licensePlate",
+                                    "operator": "contains",
+                                    "value": `${infoPage.search.toLowerCase()}`
+                                },
+                                {
+                                    "property": "dni",
+                                    "operator": "contains",
+                                    "value": `${infoPage.search.toLowerCase()}`
+                                },
+                                {
+                                    "property": "driver",
+                                    "operator": "contains",
+                                    "value": `${infoPage.search.toLowerCase()}`
+                                },
+                                {
+                                  "property": "containerNro",
+                                  "operator": "contains",
+                                  "value": `${infoPage.search.toLowerCase()}`
+                                }
+                            ]
+                        },
+                        {
+                            "property": "customer.id",
+                            "operator": "=",
+                            "value": `${customerId}`
+                        },
+                        {
+                            "property": "vehiMarcType",
+                            "operator": "=",
+                            "value": `INGRESO`
+                        },
+                        {
+                            "property": "department.id",
+                            "operator": "=",
+                            "value": `${infoPage.moreSearch.department}`
+                        }
+                    ]
+                },
+                sort: "-createdDate",
+                limit: Config.tableRows,
+                offset: infoPage.offset,
+                fetchPlan: 'full',
+            });
+        }else{
+            raw = JSON.stringify({
+                "filter": {
+                    "conditions": [
+                        {
+                            "group": "OR",
+                            "conditions": [
+                                {
+                                    "property": "licensePlate",
+                                    "operator": "contains",
+                                    "value": `${infoPage.search.toLowerCase()}`
+                                },
+                                {
+                                    "property": "dni",
+                                    "operator": "contains",
+                                    "value": `${infoPage.search.toLowerCase()}`
+                                },
+                                {
+                                    "property": "driver",
+                                    "operator": "contains",
+                                    "value": `${infoPage.search.toLowerCase()}`
+                                },
+                                {
+                                  "property": "containerNro",
+                                  "operator": "contains",
+                                  "value": `${infoPage.search.toLowerCase()}`
+                                }
+                            ]
+                        },
+                        {
+                            "property": "customer.id",
+                            "operator": "=",
+                            "value": `${customerId}`
+                        },
+                        {
+                            "property": "vehiMarcType",
+                            "operator": "=",
+                            "value": `INGRESO`
+                        }
+                    ]
+                },
+                sort: "-createdDate",
+                limit: Config.tableRows,
+                offset: infoPage.offset,
+                fetchPlan: 'full',
+            });
+        }
     }
     infoPage.count = await getFilterEntityCount("Vehicular", raw)
     dataPage = await getFilterEntityData("Vehicular", raw)
@@ -104,10 +188,11 @@ export class VehicularsIng {
     private siebarDialogContainer: InterfaceElement = document.getElementById('entity-editor-container')
     private appContainer: InterfaceElement = document.getElementById('datatable-container')
 
-    public render = async (offset: any, actualPage: any, search: any): Promise<void> => {   
+    public render = async (offset: any, actualPage: any, search: any, moreSearch: any): Promise<void> => {   
         infoPage.offset = offset
         infoPage.currentPage = actualPage
-        infoPage.search = search   
+        infoPage.search = search 
+        infoPage.moreSearch.department = moreSearch;  
         this.appContainer.innerHTML = ''
         this.appContainer.innerHTML = UIContentLayout
 
@@ -158,11 +243,12 @@ export class VehicularsIng {
                 let row = document.createElement('TR');
                 row.innerHTML += `
                 <td>${vehicular?.containerNro ?? ''}</td>
-                <td style="white-space: nowrap">${vehicular.licensePlate}</td>
-                <td>${vehicular.dni}</td>
-                <td>${vehicular.driver}</td>
-                <td id="table-date">${vehicular.ingressDate}</td>
-                <td id="table-date"> ${vehicular.ingressTime}</td>
+                <td style="white-space: nowrap">${vehicular?.licensePlate ?? ''}</td>
+                <td>${vehicular?.dni ?? ''}</td>
+                <td>${vehicular?.driver ?? ''}</td>
+                <td>${vehicular?.department?.name ?? ''}</td>
+                <td id="table-date">${vehicular?.ingressDate ?? ''}</td>
+                <td id="table-date">${vehicular?.ingressTime ?? ''}</td>
                 <td>
                     <button class="button" id="print-entity" data-entityId="${vehicular.id}">
                         <i class="fa-solid fa-file-pdf"></i>
@@ -203,8 +289,32 @@ export class VehicularsIng {
 
             // Rendering icons*/
         })
+        const cmbDepartments: InterfaceElement = document.getElementById('cmbDepartments');
+        let raw = JSON.stringify({
+            "filter": {
+                "conditions": [
+                    {
+                    "property": `customer.id`,
+                    "operator": "=",
+                    "value": `${customerId}`
+                    }
+                ]
+            },
+            sort: "name"
+        });
+        let listDepartments = await getFilterEntityData(`Department`, raw);
+            if(listDepartments.length != 0 || listDepartments != undefined){
+                for (let i = 0; i < listDepartments.length; i++) {
+                    let department = listDepartments[i]; // getting visit items
+                    let option = document.createElement('option');
+                    option.setAttribute('value',department.id);
+                    option.innerHTML = department?.name ?? '';
+                    cmbDepartments.appendChild(option);
+                }
+                cmbDepartments.value = infoPage.moreSearch.department;
+            } 
         btnSearch.addEventListener('click', async () => {
-            new VehicularsIng().render(Config.offset , Config.currentPage, search.value.toLowerCase().trim())
+            new VehicularsIng().render(Config.offset , Config.currentPage, search.value.toLowerCase().trim(), cmbDepartments.value)
         })
     }
 
@@ -618,7 +728,7 @@ export class VehicularsIng {
                 infoPage.offset = Config.tableRows * (page - 1)
                 currentPage = page
                 fillBtnPagination(page, Config.colorPagination)
-                new VehicularsIng().render(infoPage.offset, currentPage, infoPage.search)
+                new VehicularsIng().render(infoPage.offset, currentPage, infoPage.search, infoPage.moreSearch.department)
             })
 
             return button
@@ -652,12 +762,12 @@ export class VehicularsIng {
 
         function setupButtonsEvents(prevButton: InterfaceElement, nextButton: InterfaceElement) {
             prevButton.addEventListener('click', (): void => {
-                new VehicularsIng().render(Config.offset, Config.currentPage, infoPage.search)
+                new VehicularsIng().render(Config.offset, Config.currentPage, infoPage.search, infoPage.moreSearch.department)
             })
 
             nextButton.addEventListener('click', (): void => {
                 infoPage.offset = Config.tableRows * (pageCount - 1)
-                new VehicularsIng().render(infoPage.offset, pageCount, infoPage.search)
+                new VehicularsIng().render(infoPage.offset, pageCount, infoPage.search, infoPage.moreSearch.department)
             })
         }
     }

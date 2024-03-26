@@ -235,10 +235,10 @@ export class Sidebar {
         });
         // render AssistControl
         document.getElementById('render-vehicularsing')?.addEventListener('click', () => {
-            new VehicularsIng().render(Config.offset, Config.currentPage, "");
+            new VehicularsIng().render(Config.offset, Config.currentPage, "", null);
         });
         document.getElementById('render-vehicularsexit')?.addEventListener('click', () => {
-            new VehicularsExit().render(Config.offset, Config.currentPage, "");
+            new VehicularsExit().render(Config.offset, Config.currentPage, "", null);
         });
         // render AssistControl
         document.getElementById('render-assistControl')?.addEventListener('click', () => {
