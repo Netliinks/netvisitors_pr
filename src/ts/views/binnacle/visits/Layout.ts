@@ -29,12 +29,16 @@ export const UIContentLayout = `
             CI <i class="fa-regular fa-filter"></i>
             </span></th>
 
-            <th class="thead_centered" width=100><span data-type="date">
-            Fecha <i class="fa-regular fa-filter"></i>
+            <th><span data-type="DEPARTMENT">
+            Departamento <i class="fa-regular fa-filter"></i>
             </span></th>
 
-            <th class="thead_centered" width=120><span data-type="time">
-            Hora <i class="fa-regular fa-filter"></i>
+            <th class="thead_centered" width=100><span data-type="date">
+            Fecha Ingreso <i class="fa-regular fa-filter"></i>
+            </span></th>
+
+            <th class="thead_centered" width=100><span data-type="date2">
+            Fecha Salida <i class="fa-regular fa-filter"></i>
             </span></th>
 
             <th class="thead_centered" width=150><span data-type="citadel">
@@ -117,7 +121,7 @@ export const UIRightSidebar = `
   <div class="material_input">
     <input type="text"
       id="entity-phone"
-      maxlength="10" autocomplete="none">
+      maxlength="10" autocomplete="none" class="input_filled">
     <label for="entity-phone">Teléfono</label>
   </div>
 

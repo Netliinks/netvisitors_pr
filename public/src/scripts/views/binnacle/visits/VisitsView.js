@@ -142,8 +142,9 @@ export class Visits {
                     row.innerHTML += `
                     <td style="white-space: nowrap">${visit.firstName} ${visit.firstLastName} ${visit.secondLastName}</td>
                     <td>${visit.dni}</td>
-                    <td id="table-date">${visit.creationDate}</td>
-                    <td id="table-time" style="white-space: nowrap">${visit.creationTime}</td>
+                    <td>${visit?.department?.name ?? ''}</td>
+                    <td id="table-date">${visit?.ingressDate ?? ''} ${visit?.ingressTime ?? ''}</td>
+                    <td id="table-date2">${visit?.egressDate ?? ''} ${visit?.egressTime ?? ''}</td>
                     <td>${verifyUserType(visit.user.userType)}</td>
                     <td class="tag"><span>${visit.visitState.name}</span></td>
 
@@ -213,6 +214,8 @@ export class Visits {
                 visitCitadelID.value = entityData.citadel?.name;
                 const visitDepartment = document.getElementById('visit-department');
                 visitDepartment.value = entityData.department?.name;
+                const phoneNumber = document.getElementById('entity-phone');
+                phoneNumber.value = entityData?.phoneNumber ?? '';
                 // Start marking
                 const ingressDate = document.getElementById('ingress-date');
                 ingressDate.value = entityData?.ingressDate ?? '';

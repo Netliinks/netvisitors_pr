@@ -347,6 +347,7 @@ export class VehicularsExit {
                 type: document.getElementById('marking-type'),
                 unregisteredDriver: document.getElementById('marking-unregisteredDriver'),
                 containerNro: document.getElementById('marking-containerNro'),
+                phoneNumber: document.getElementById('marking-entity-phone'),
                 department: document.getElementById('marking-department'),
                 observation: document.getElementById('marking-observation'),
                 //dayManager: document.getElementById('marking-dayManager'),
@@ -374,6 +375,7 @@ export class VehicularsExit {
             _values.type.value = markingData?.vehiMarcType ?? '';
             _values.unregisteredDriver.value = markingData?.unregisteredDriver ?? '';
             _values.containerNro.value = markingData?.containerNro ?? '';
+            _values.phoneNumber.value = markingData?.phoneNumber ?? '';
             _values.department.value = markingData?.department?.name ?? '';
             _values.observation.value = markingData?.observation ?? '';
             //_values.dayManager.value = markingData?.dayManager ?? '';
